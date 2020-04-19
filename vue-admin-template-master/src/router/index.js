@@ -8,6 +8,7 @@ Vue.use(Router)
 
 /* Layout */
 import Layout from '../views/layout/Layout'
+import id from 'element-ui/src/locale/lang/id'
 
 /**
  * hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
@@ -65,16 +66,59 @@ export const constantRouterMap = [
       }
     ]
   },
-
   {
-    path: '/form',
+    path: '/subject',
     component: Layout,
+    redirect: '/subject/list',
+    name: '课程分类管理',
+    meta: { title: '课程分类管理', icon: 'example' },
     children: [
       {
-        path: 'index',
-        name: 'Form',
-        component: () => import('@/views/form/index'),
-        meta: { title: 'Form', icon: 'form' }
+        path: 'list',
+        name: '课程分类列表',
+        component: () => import('@/views/edu/subject/list.vue'),
+        meta: { title: '课程分类列表', icon: 'table' }
+      },
+      {
+        path: 'add',
+        name: '添加课程分类',
+        component: () => import('@/views/edu/subject/add.vue'),
+        meta: { title: '添加课程分类', icon: 'tree' }
+      }
+    ]
+  },
+  {
+    path: '/course',
+    component: Layout,
+    redirect: '/course/list',
+    name: '课程管理',
+    meta: { title: '课程管理', icon: 'example' },
+    children: [
+      {
+        path: 'list',
+        name: '课程列表',
+        component: () => import('@/views/edu/course/list.vue'),
+        meta: { title: '课程列表', icon: 'table' }
+      },
+      {
+        path: 'info/:id',
+        name: '添加课程',
+        component: () => import('@/views/edu/course/info.vue'),
+        meta: { title: '添加课程', icon: 'tree' }
+      },
+      {
+        path: 'chapter/:id',
+        name: '创建课程大纲',
+        component: () => import('@/views/edu/course/chapter.vue'),
+        meta: { title: '创建课程大纲', icon: 'tree' },
+        hidden: true
+      },
+      {
+        path: 'publish/:id',
+        name: '提交',
+        component: () => import('@/views/edu/course/publish.vue'),
+        meta: { title: '提交', icon: 'tree' },
+        hidden: true
       }
     ]
   },

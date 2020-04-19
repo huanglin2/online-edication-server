@@ -37,5 +37,11 @@ export default {
       method: 'post',
       data: teacher
     })
+  },
+  getAllTeacher() {
+    return request({
+      url: `/eduservice/teacher/findAll`,
+      method: 'get'
+    })
   }
 }
