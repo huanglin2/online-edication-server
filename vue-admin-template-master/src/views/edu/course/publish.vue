@@ -51,7 +51,7 @@
         })
       },
       previous() {
-        this.$router.push('/course/chapter/1')
+        this.$router.push(`/course/chapter/${this.courseId}`)
       },
       publish() {
         this.$confirm('确定要发布课程吗', '提示', {

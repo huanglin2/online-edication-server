@@ -28,5 +28,19 @@ export default {
       url: `/eduservice/video/getVideoById/${videoId}`,
       method: 'get'
     })
+  },
+  //  删除阿里云视频
+  removeAliyunVideo(videoId) {
+    return request({
+      url: `/eduvod/video//deleteAliyVideo/${videoId}`,
+      method: 'delete'
+    })
+  },
+  //  根据courseId批量删除小节和视频
+  removeAliyunVideoBatch(courseId) {
+    return request({
+      url: `/eduvod/video/deleteBatchVideo/${courseId}`,
+      method: 'delete'
+    })
   }
 }

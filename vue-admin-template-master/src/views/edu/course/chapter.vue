@@ -15,7 +15,8 @@
           <el-input v-model="chapter.title" :value="chapter.title"/>
         </el-form-item>
         <el-form-item label="章节排序">
-          <el-input-number v-model="chapter.sort" :min="0" controls-position="right" :value="min"/>
+          <el-input-number v-model="chapter.sort" controls-position="right" @change="handleChange" :min="1"
+                           :max="255"></el-input-number>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -29,8 +30,9 @@
         <el-form-item label="课时标题">
           <el-input v-model="video.title"/>
         </el-form-item>
-        <el-form-item label="课时排序">
-          <el-input-number v-model="video.sort" :min="0" controls-position="right"/>
+        <el-form-item label="小节排序">
+          <el-input-number v-model="video.sort" controls-position="right" @change="handleChange" :min="1"
+                           :max="255"></el-input-number>
         </el-form-item>
         <el-form-item label="是否免费">
           <el-radio-group v-model="video.free">
@@ -39,7 +41,26 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="上传视频">
-          <!-- TODO -->
+          <el-upload
+            :on-success="handleVodUploadSuccess"
+            :on-remove="handleVodRemove"
+            :before-remove="beforeVodRemove"
+            :on-exceed="handleUploadExceed"
+            :file-list="fileList"
+            :action="BASE_API+'/eduvod/video/uploadAliyVideo'"
+            :limit="1"
+            class="upload-demo">
+            <el-button size="small" type="primary">上传视频</el-button>
+            <el-tooltip placement="right-end">
+              <div slot="content">最大支持1G，<br>
+                支持3GP、ASF、AVI、DAT、DV、FLV、F4V、<br>
+                GIF、M2T、M4V、MJ2、MJPEG、MKV、MOV、MP4、<br>
+                MPE、MPG、MPEG、MTS、OGG、QT、RM、RMVB、<br>
+                SWF、TS、VOB、WMV、WEBM 等视频格式上传
+              </div>
+              <i class="el-icon-question"/>
+            </el-tooltip>
+          </el-upload>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -82,13 +103,17 @@
   export default {
     data() {
       return {
+        BASE_API: process.env.BASE_API,
+        fileList: [],
         dialogVideoFormVisible: false,
         saveVideoBtnDisabled: false,
-        min: 0,
-        chapter: {},
+        chapter: {
+          sort: 1
+        },
         video: {
           courseId: '',
-          chapterId: ''
+          chapterId: '',
+          sort: 1
         },
         dialogChapterFormVisible: false,
         activeNames: '',
@@ -104,7 +129,37 @@
       this.getChapterVideo()
     },
     methods: {
-      // TODO 有bug未解决
+      // 上传成功调用方法
+      handleVodUploadSuccess(response, file, fileList) {
+        // 视频id
+        this.video.videoSourceId = response.data.videoId
+        // 视频名称
+        this.video.videoOriginalName = file.name
+        this.fileList = fileList
+      },
+      handleUploadExceed() {
+        this.$message.warning('想要重新上传视频，请先删除已上传视频')
+      },
+      // 删除之前
+      beforeVodRemove(file) {
+        return this.$confirm(`确定要移除 ${file.name} 吗?`)
+      },
+      // 删除确定
+      handleVodRemove() {
+        video.removeAliyunVideo(this.video.videoSourceId).then(response => {
+          this.$message({
+            type: 'success',
+            message: '删除成功'
+          })
+          //  清空文件列表
+          this.fileList = []
+          // 清空视频id
+          this.video.videoSourceId = ''
+          // 清空视频名称
+          this.video.videoOriginalName = ''
+        })
+      },
+      /*=============================小节操作===========================*/
       saveOrUpdateVideo() {
         if (!this.video.id) {
           this.addVideo()
@@ -137,6 +192,7 @@
       },
       // 打开添加框
       openAddVideo(chapterId) {
+        this.fileList = []
         this.video.title = ''
         this.video.sort = ''
         this.dialogVideoFormVisible = true
@@ -239,8 +295,8 @@
         })
       }
       ,
-      handleChange() {
-
+      handleChange(value) {
+        console.log(value)
       }
       ,
       // 弹出添加框

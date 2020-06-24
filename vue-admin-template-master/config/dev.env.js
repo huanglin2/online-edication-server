@@ -4,6 +4,6 @@ const prodEnv = require('./prod.env')
 
 module.exports = merge(prodEnv, {
   NODE_ENV: '"development"',
-  BASE_API: '"http://localhost:9001"',
-  OSS_PATH: '"https://online-education1.oss-cn-beijing.aliyuncs.com"'
+  BASE_API: '"http://localhost:8222"',
+  OSS_PATH: '"https://online-education2.oss-cn-beijing.aliyuncs.com"'
 })

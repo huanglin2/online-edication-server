@@ -82,6 +82,7 @@
 
 <script>
   import course from '@/api/edu/course'
+  import video from '../../../api/edu/video'
 
   export default {
     data() {
@@ -97,6 +98,7 @@
       this.getList()
     },
     methods: {
+      // 不加条件的分页查询
       getList(page = 1) {
         this.page = page
         course.getCourseListByPage(this.page, this.limit)
@@ -105,19 +107,23 @@
             this.total = response.data.total
           })
       },
+      // 条件查询课程分页
       searchCourse() {
         course.findCourseListByPage(this.page, this.limit, this.CourseQuery).then(response => {
           this.list = response.data.rows
           this.total = response.data.total
         })
       },
-      removeDataById(id) {
+      // 删除一个课程
+      removeDataById(courseId) {
         this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          course.deleteCourseById(id).then(response => {
+          // TODO 有点问题 删除次数过多？
+          course.deleteCourseById(courseId).then(response => {
+            this.removeVideoBatch(courseId)
             this.getList()
           })
           this.$message({
@@ -130,6 +136,10 @@
             message: '已取消删除'
           })
         })
+      },
+      // 删除课程和删除其下所有视频
+      removeVideoBatch(courseId) {
+        video.removeAliyunVideoBatch(courseId)
       },
       // 清空
       resetData() {

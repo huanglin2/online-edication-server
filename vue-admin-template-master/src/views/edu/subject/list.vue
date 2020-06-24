@@ -45,7 +45,7 @@
         return data.title.toLowerCase().indexOf(value) !== -1
       },
       getAllSubjectList() {
-        subject.getSubjectList().then((response) => {
+        subject.getAllOneTwoSubject().then((response) => {
           this.data2 = response.data.list
         })
       }
